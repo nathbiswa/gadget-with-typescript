@@ -4,6 +4,8 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { Button } from "@heroui/react";
+import Image from 'next/image';
+import { authClient } from '@/lib/auth-client';
 
 interface NavItem {
   label: string;
@@ -11,14 +13,18 @@ interface NavItem {
 }
 
 export default function Navbar() {
+  const { data: session } = authClient.useSession();
+  const user = session?.user;
+  console.log('User:', user); // Log the user object to check its structure
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const pathname = usePathname(); // Tracks current active URL path
+  const redirect = (url: string) => {
+    if (typeof window !== 'undefined') {
+      window.location.href = url;
+    }
+  };
 
-  // Simulated auth state (Will be connected to NextAuth later)
-  const isLoggedIn = true;
-  const userAvatar = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=100&auto=format&fit=crop";
-
-  const routes: NavItem[] = isLoggedIn
+  const routes: NavItem[] = user
     ? [
       { label: 'Home', path: '/' },
       { label: 'Explore Gadgets', path: '/explore' },
@@ -32,8 +38,9 @@ export default function Navbar() {
       { label: 'Login', path: '/login' },
     ];
 
-  const handleLogout = () => {
-    alert("Logging out...");
+  const handleLogout = async () => {
+    await authClient.signOut();
+    redirect('/login');
   };
 
   return (
@@ -69,12 +76,14 @@ export default function Navbar() {
             </div>
 
             {/* User Profile & Logout Section (If Logged In) */}
-            {isLoggedIn && (
+            {user && (
               <div className="flex items-center space-x-3 pl-4 border-l border-gray-200">
-                <img
-                  src={userAvatar}
+                <Image
+                  src={user.image}
                   alt="User Avatar"
-                  className="w-9 h-9 rounded-full object-cover border border-gray-200"
+                  width={40}
+                  height={40}
+                  className="rounded-full object-cover border border-gray-200"
                 />
                 <Button
                   onClick={handleLogout}
@@ -88,10 +97,12 @@ export default function Navbar() {
 
           {/* Mobile Hamburger Menu Trigger */}
           <div className="-mr-2 flex md:hidden items-center space-x-3">
-            {isLoggedIn && (
-              <img
-                src={userAvatar}
+            {user && (
+              <Image
+                src={user.image}
                 alt="User Avatar"
+                width={40}
+                height={40}
                 className="w-8 h-8 rounded-full object-cover border border-gray-200"
               />
             )}
@@ -127,7 +138,7 @@ export default function Navbar() {
               );
             })}
 
-            {isLoggedIn && (
+            {user && (
               <div className="pt-3 border-t border-gray-100 px-4">
                 <Button
                   onClick={() => { setIsOpen(false); handleLogout(); }}

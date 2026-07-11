@@ -1,37 +1,37 @@
 'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
 import { Check } from "@gravity-ui/icons";
 import { Button, Description, FieldError, Form, Input, Label, TextField } from "@heroui/react";
+import { authClient } from '@/lib/auth-client';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 export default function LoginPage() {
-    const [successMessage, setSuccessMessage] = useState<string>('');
+    const router = useRouter();
 
     // Form submit handler using FormData
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
-        setSuccessMessage('');
 
         const formData = new FormData(e.currentTarget);
-        const data: Record<string, string> = {};
-
-        formData.forEach((value, key) => {
-            data[key] = value.toString();
+        const user = Object.fromEntries(formData.entries());
+        const { data, error } = await authClient.signIn.email({
+            ...user,
         });
 
-        // Demo authentication check
-        if (data.email === 'user@gadgetlease.com' && data.password === 'Password123') {
-            setSuccessMessage('Login successful! Redirecting to dashboard...');
-        } else {
-            alert('Invalid credentials. Tip: Use the Demo Credentials below.');
+        // আপনার লগইন পেজের onSubmit-এর ভেতরের অংশ:
+        if (!error) {
+            toast.success('Login successful');
+            router.push('/');
         }
     };
 
+
     // Google Login Handler
     const handleGoogleLogin = () => {
-        setSuccessMessage('Redirecting to Google Authentication...');
-        // Real-world integration will trigger signIn('google') from next-auth here
+        authClient.signIn.social({ provider: 'google' });
+        toast.success('Login successful! Redirecting to home page...');
+        router.push('/'); // Redirect to home after Google login
     };
 
     return (
@@ -49,12 +49,12 @@ export default function LoginPage() {
                     </p>
                 </div>
 
-                {/* Alert Notification */}
+                {/* Alert Notification
                 {successMessage && (
                     <div className="bg-emerald-50 border border-emerald-200 text-emerald-600 px-4 py-3 rounded-xl text-sm font-medium">
                         {successMessage}
                     </div>
-                )}
+                )} */}
 
                 {/* 🌐 Google Login Button */}
                 <div>

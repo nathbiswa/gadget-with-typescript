@@ -1,38 +1,46 @@
 'use client';
-
-import { useState } from 'react';
 import Link from 'next/link';
 import { Check } from "@gravity-ui/icons";
 import { Button, Description, FieldError, Form, Input, Label, TextField } from "@heroui/react";
+import { authClient } from '@/lib/auth-client';
+import { toast } from 'react-toastify';
+import { useRouter } from 'next/navigation';
 
 export default function RegisterPage() {
-    const [successMessage, setSuccessMessage] = useState<string>('');
+    const router = useRouter();
 
-    // Form submit handler using native FormData and matching validations
-    const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const onSubmit = async (e) => {
         e.preventDefault();
-        setSuccessMessage('');
 
         const formData = new FormData(e.currentTarget);
-        const data: Record<string, string> = {};
+        const user = Object.fromEntries(formData.entries());
 
-        formData.forEach((value, key) => {
-            data[key] = value.toString();
-        });
+        const { data, error } = await authClient.signUp.email({
+            name: user.name,
+            email: user.email,
+            password: user.password,
+            image: user.image
+        })
 
-        // Custom cross-field validation for passwords
-        if (data.password !== data.confirmPassword) {
-            alert("Passwords do not match! Please check again.");
-            return;
+        console.log('Sign Up Response:', { data, error });
+
+        if (data) {
+            toast.success('Successfully Sign Up');
+            // redirect('/');
         }
 
-        setSuccessMessage('Registration successful! You can now proceed to log in.');
-        e.currentTarget.reset();
-    };
+        if (error) {
+            toast.error("Something went wrong");
+        }
+    }
 
-    const handleGoogleSignup = () => {
-        setSuccessMessage('Redirecting to Google Sign Up flow...');
-    };
+    const handleGoogleSignIn = async () => {
+        await authClient.signIn.social({
+            provider: "google",
+        });
+        toast.success('Google Sign In successful! Redirecting to home page...');
+        router.push('/'); // Redirect to home after Google login
+    }
 
     return (
         <div className="min-h-[85vh] flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
@@ -49,18 +57,18 @@ export default function RegisterPage() {
                     </p>
                 </div>
 
-                {/* Alert Notification */}
+                {/* Alert Notification
                 {successMessage && (
                     <div className="bg-emerald-50 border border-emerald-200 text-emerald-600 px-4 py-3 rounded-xl text-sm font-medium">
                         ✅ {successMessage}
                     </div>
-                )}
+                )} */}
 
                 {/* 🌐 Google Sign Up Button */}
                 <div>
                     <Button
                         type="button"
-                        onClick={handleGoogleSignup}
+                        onClick={handleGoogleSignIn}
                         className="w-full bg-white hover:bg-gray-50 text-gray-700 font-bold py-3 px-4 rounded-xl border border-gray-200 shadow-sm transition-all flex items-center justify-center gap-3 cursor-pointer text-sm"
                     >
                         <svg className="w-5 h-5" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -104,7 +112,6 @@ export default function RegisterPage() {
                     {/* 🖼️ Avatar Image URL Field */}
                     <TextField
                         isRequired
-                        name="avatarUrl"
                         type="url"
                         className="w-full flex flex-col gap-1"
                         validate={(value) => {
@@ -115,11 +122,17 @@ export default function RegisterPage() {
                         }}
                     >
                         <Label className="text-sm font-semibold text-gray-700">Profile Avatar Image URL</Label>
-                        <Input placeholder="https://images.unsplash.com/your-photo.jpg" className="w-full bg-gray-50 border border-gray-200 focus:border-indigo-500 rounded-xl px-3 py-2 text-sm focus:outline-none text-gray-800" />
+
+                        {/* 🎯 ফিক্সড: name="image" প্রোপার্টিটি সরাসরি Input-এর ভেতর দেওয়া হলো */}
+                        <Input
+                            name="image"
+                            placeholder="https://images.unsplash.com/your-photo.jpg"
+                            className="w-full bg-gray-50 border border-gray-200 focus:border-indigo-500 rounded-xl px-3 py-2 text-sm focus:outline-none text-gray-800"
+                        />
+
                         <Description className="text-xs text-gray-400 mt-1">Provide an absolute online image path for your display avatar</Description>
                         <FieldError className="text-xs text-red-500 font-medium mt-1" />
                     </TextField>
-
                     {/* Email Field */}
                     <TextField
                         isRequired
