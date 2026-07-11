@@ -97,7 +97,26 @@ export default function RegisterPage() {
                         }}
                     >
                         <Label className="text-sm font-semibold text-gray-700">Full Name</Label>
-                        <Input placeholder="John Doe" className="w-full bg-gray-50 border border-gray-200 focus:border-indigo-500 rounded-xl px-3 py-2 text-sm focus:outline-none" />
+                        <Input placeholder="John Doe" className="w-full bg-gray-50 border border-gray-200 focus:border-indigo-500 rounded-xl px-3 py-2 text-sm focus:outline-none text-gray-800" />
+                        <FieldError className="text-xs text-red-500 font-medium mt-1" />
+                    </TextField>
+
+                    {/* 🖼️ Avatar Image URL Field */}
+                    <TextField
+                        isRequired
+                        name="avatarUrl"
+                        type="url"
+                        className="w-full flex flex-col gap-1"
+                        validate={(value) => {
+                            if (!value.startsWith('http://') && !value.startsWith('https://')) {
+                                return "Please enter a valid image URL starting with http:// or https://";
+                            }
+                            return null;
+                        }}
+                    >
+                        <Label className="text-sm font-semibold text-gray-700">Profile Avatar Image URL</Label>
+                        <Input placeholder="https://images.unsplash.com/your-photo.jpg" className="w-full bg-gray-50 border border-gray-200 focus:border-indigo-500 rounded-xl px-3 py-2 text-sm focus:outline-none text-gray-800" />
+                        <Description className="text-xs text-gray-400 mt-1">Provide an absolute online image path for your display avatar</Description>
                         <FieldError className="text-xs text-red-500 font-medium mt-1" />
                     </TextField>
 
@@ -115,7 +134,7 @@ export default function RegisterPage() {
                         }}
                     >
                         <Label className="text-sm font-semibold text-gray-700">Email Address</Label>
-                        <Input placeholder="john@example.com" className="w-full bg-gray-50 border border-gray-200 focus:border-indigo-500 rounded-xl px-3 py-2 text-sm focus:outline-none" />
+                        <Input placeholder="john@example.com" className="w-full bg-gray-50 border border-gray-200 focus:border-indigo-500 rounded-xl px-3 py-2 text-sm focus:outline-none text-gray-800" />
                         <FieldError className="text-xs text-red-500 font-medium mt-1" />
                     </TextField>
 
@@ -140,7 +159,7 @@ export default function RegisterPage() {
                         }}
                     >
                         <Label className="text-sm font-semibold text-gray-700">Password</Label>
-                        <Input placeholder="Create a strong password" className="w-full bg-gray-50 border border-gray-200 focus:border-indigo-500 rounded-xl px-3 py-2 text-sm focus:outline-none" />
+                        <Input placeholder="Create a strong password" className="w-full bg-gray-50 border border-gray-200 focus:border-indigo-500 rounded-xl px-3 py-2 text-sm focus:outline-none text-gray-800" />
                         <Description className="text-xs text-gray-400 mt-1">Must be ≥ 8 chars with 1 uppercase & 1 number</Description>
                         <FieldError className="text-xs text-red-500 font-medium mt-1" />
                     </TextField>
@@ -153,7 +172,7 @@ export default function RegisterPage() {
                         className="w-full flex flex-col gap-1"
                     >
                         <Label className="text-sm font-semibold text-gray-700">Confirm Password</Label>
-                        <Input placeholder="Repeat your password" className="w-full bg-gray-50 border border-gray-200 focus:border-indigo-500 rounded-xl px-3 py-2 text-sm focus:outline-none" />
+                        <Input placeholder="Repeat your password" className="w-full bg-gray-50 border border-gray-200 focus:border-indigo-500 rounded-xl px-3 py-2 text-sm focus:outline-none text-gray-800" />
                         <FieldError className="text-xs text-red-500 font-medium mt-1" />
                     </TextField>
 
