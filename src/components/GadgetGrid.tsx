@@ -1,11 +1,9 @@
 'use client';
-// src/components/GadgetGrid.tsx
 
 import { useState, useEffect } from 'react';
 import { Gadget } from '@/types/gadget';
 import GadgetCard from './GadgetCard';
 
-// ডাটা লোড হওয়ার সময় দেখানোর জন্য স্কেলিটন কম্পোনেন্ট
 function SkeletonCard() {
   return (
     <div className="bg-white rounded-xl border border-gray-100 overflow-hidden h-[400px] animate-pulse p-5 flex flex-col justify-between">
@@ -14,7 +12,6 @@ function SkeletonCard() {
         <div className="bg-gray-200 h-4 rounded w-1/3"></div>
         <div className="bg-gray-200 h-5 rounded w-3/4"></div>
         <div className="bg-gray-200 h-4 rounded w-full"></div>
-        <div className="bg-gray-200 h-4 rounded w-5/6"></div>
       </div>
       <div className="flex justify-between items-center pt-4 border-t border-gray-100 mt-4">
         <div className="bg-gray-200 h-6 rounded w-1/4"></div>
@@ -28,57 +25,62 @@ export default function GadgetGrid() {
   const [gadgets, setGadgets] = useState<Gadget[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
 
-  // বাস্তবসম্মত গ্যাজেট ডাটা (No Lorem Ipsum!)
   const dummyGadgets: Gadget[] = [
     {
       id: "1",
       title: "Sony Alpha 7 IV Mirrorless Camera",
       shortDescription: "33MP full-frame sensor, perfect for high-end wedding videography and professional photography.",
-      imageUrl: "https://images.unsplash.com/photo-1616423642331-15cfbc707eb0?q=80&w=600&auto=format&fit=crop",
+      fullDescription: "",
+      images: ["https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=600&auto=format&fit=crop"], // images ব্যবহার করা হলো
       pricePerDay: 3500,
       rating: 4.9,
       location: "Dhaka",
-      availableDate: "Available Now"
+      availableDate: "Available Now",
+      category: "Cameras"
     },
     {
       id: "2",
       title: "DJI Mavic 3 Pro Drone",
       shortDescription: "Triple-camera system with 4K video recording, omnidirectional obstacle sensing, and 43 mins flight time.",
-      imageUrl: "https://images.unsplash.com/photo-1527977966376-1c8408f9f108?q=80&w=600&auto=format&fit=crop",
+      fullDescription: "",
+      images: ["https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=600&auto=format&fit=crop"],
       pricePerDay: 5000,
       rating: 4.8,
       location: "Chittagong",
-      availableDate: "From July 12"
+      availableDate: "From July 12",
+      category: "Drones"
     },
     {
       id: "3",
       title: "ASUS ROG Strix G16 Gaming Laptop",
       shortDescription: "Intel Core i9 13th Gen, 32GB RAM, RTX 4080 Graphics. Ideal for heavy gaming and 3D rendering.",
-      imageUrl: "https://images.unsplash.com/photo-1603481588273-2f908a9a7a1b?q=80&w=600&auto=format&fit=crop",
+      fullDescription: "",
+      images: ["https://images.unsplash.com/photo-1603481588273-2f908a9a7a1b?q=80&w=600&auto=format&fit=crop"],
       pricePerDay: 2500,
       rating: 4.7,
       location: "Dhaka",
-      availableDate: "Available Now"
+      availableDate: "Available Now",
+      category: "Laptops"
     },
     {
       id: "4",
       title: "Apple iPad Pro 12.9 M2",
       shortDescription: "Liquid Retina XDR display, M2 chip, 256GB storage. Great for digital artists and on-the-go video editing.",
-      imageUrl: "https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?q=80&w=600&auto=format&fit=crop",
+      fullDescription: "",
+      images: ["https://images.unsplash.com/photo-1544244015-0df4b3ffc6b0?q=80&w=600&auto=format&fit=crop"],
       pricePerDay: 1500,
       rating: 4.9,
       location: "Sylhet",
-      availableDate: "From July 10"
+      availableDate: "From July 10",
+      category: "Laptops"
     }
   ];
 
   useEffect(() => {
-    // ২ সেকেন্ডের একটি কৃত্রিম লেটেন্সি (লোডিং ইফেক্ট দেখার জন্য)
     const timer = setTimeout(() => {
       setGadgets(dummyGadgets);
       setLoading(false);
-    }, 2000);
-
+    }, 1500);
     return () => clearTimeout(timer);
   }, []);
 
@@ -86,10 +88,9 @@ export default function GadgetGrid() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
       <div className="mb-8">
         <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">Featured Rental Gear</h2>
-        <p className="text-gray-500 mt-2 text-sm md:text-base">Explore our top-rated tech gear available for rent today near you.</p>
+        <p className="text-gray-500 mt-2 text-sm">Explore our top-rated tech gear available for rent today near you.</p>
       </div>
 
-      {/* রিকোয়ারমেন্ট অনুযায়ী ডেক্সটপে ৪টি কলাম গ্রিড (md:grid-cols-2 lg:grid-cols-4) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {loading
           ? Array.from({ length: 4 }).map((_, idx) => <SkeletonCard key={idx} />)
