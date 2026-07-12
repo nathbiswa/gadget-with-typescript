@@ -15,7 +15,7 @@ interface NavItem {
 export default function Navbar() {
   const { data: session } = authClient.useSession();
   const user = session?.user;
-  console.log('User:', user); // Log the user object to check its structure
+  // console.log('User:', user); 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const pathname = usePathname(); // Tracks current active URL path
   const redirect = (url: string) => {

@@ -27,3 +27,4 @@ export interface Gadget {
   specifications: Specification[]; // নেস্টেড ইন্টারফেস অ্যারে (নতুন)
   reviews: Review[];               // নেস্টেড ইন্টারফেস অ্যারে (নতুন)
 }
+
