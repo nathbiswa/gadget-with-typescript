@@ -13,6 +13,15 @@ export const auth = betterAuth({
     // Optional: if you don't provide a client, database transactions won't be enabled.
     client
   }),
+  user: {
+        additionalFields: {
+            role: {
+                type: "string",
+                required: false,
+                defaultValue: "user"
+            }
+        }
+    },
   socialProviders: { 
     google: { 
       clientId: process.env.GOOGLE_CLIENT_ID,

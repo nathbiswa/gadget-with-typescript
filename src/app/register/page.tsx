@@ -26,7 +26,7 @@ export default function RegisterPage() {
 
         if (data) {
             toast.success('Successfully Sign Up');
-            // redirect('/');
+            router.push('/'); // Redirect to login after successful signup
         }
 
         if (error) {

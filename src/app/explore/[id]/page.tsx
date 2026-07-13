@@ -1,5 +1,6 @@
 // src/app/explore/[id]/page.tsx
 
+import RentButton from '@/components/RentButton';
 import { Gadget } from '@/types/gadget';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -26,7 +27,7 @@ export default async function GadgetDetailsPage({ params }: ParamProps) {
 
     const result = await res.json();
     const gadget: Gadget = result.data;
-    console.log('Gadget Details:', gadget); // ডাটা কনসোল লগে দেখানো হচ্ছে
+    // console.log('Gadget Details:', gadget); // ডাটা কনসোল লগে দেখানো হচ্ছে
 
     return (
         <div className="container mx-auto px-4 py-10 max-w-6xl">
@@ -96,9 +97,7 @@ export default async function GadgetDetailsPage({ params }: ParamProps) {
                     </div>
 
                     {/* Rent Button */}
-                    <button className="w-full mt-8 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3.5 rounded-xl transition shadow-lg shadow-indigo-100">
-                        Rent This Gadget
-                    </button>
+                    <RentButton gadgetId={gadget._id} pricePerDay={gadget.pricePerDay} />
                 </div>
             </div>
 
