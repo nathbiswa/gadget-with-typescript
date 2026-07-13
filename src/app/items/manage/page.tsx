@@ -1,69 +1,112 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from "@heroui/react";
+import { authClient } from '@/lib/auth-client';
+import { toast, ToastContainer } from 'react-toastify';
+import Image from 'next/image';
 
-// Strict TypeScript structure for listed gear items
 interface ManagedItem {
-    id: string;
+    _id: string; // ডাটাবেজের আইডি সাধারণত _id হয়
     title: string;
     category: string;
     pricePerDay: number;
-    status: 'Available' | 'Rented';
-    totalRents: number;
-    img: string;
+    status: 'Available' | 'Rented' | 'pending' | 'approved';
+    totalRents?: number;
+    images?: string[];
 }
 
 export default function ManageItemsPage() {
-    // Mock state data to simulate database listings
-    const [items, setItems] = useState<ManagedItem[]>([
-        {
-            id: "1",
-            title: "Sony Alpha 7 IV Mirrorless Camera",
-            category: "Cameras",
-            pricePerDay: 3500,
-            status: "Available",
-            totalRents: 12,
-            img: "https://images.unsplash.com/photo-1516035069371-29a1b244cc32?q=80&w=150&auto=format&fit=crop"
-        },
-        {
-            id: "2",
-            title: "DJI Mavic 3 Pro Drone",
-            category: "Drones",
-            pricePerDay: 5000,
-            status: "Rented",
-            totalRents: 8,
-            img: "https://images.unsplash.com/photo-1473968512647-3e447244af8f?q=80&w=150&auto=format&fit=crop"
-        },
-        {
-            id: "3",
-            title: "ASUS ROG Strix G16 Gaming Laptop",
-            category: "Laptops",
-            pricePerDay: 2500,
-            status: "Available",
-            totalRents: 5,
-            img: "https://images.unsplash.com/photo-1603481588273-2f908a9a7a1b?q=80&w=150&auto=format&fit=crop"
-        }
-    ]);
+    const router = useRouter();
+    const { data: session, isPending } = authClient.useSession();
 
-    // Handle immediate item deletion from client state
-    const handleDelete = (id: string) => {
-        const confirmDelete = window.confirm("Are you sure you want to remove this listing permanently?");
-        if (confirmDelete) {
-            setItems(items.filter(item => item.id !== id));
+    const [items, setItems] = useState<ManagedItem[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [deleteLoadingId, setDeleteLoadingId] = useState<string | null>(null);
+
+    // 📥 ইউজারের নিজস্ব ইনভেন্টরি ডাটা ফেচ করার লজিক
+    const fetchUserItems = async (userId: string) => {
+        try {
+            // ব্যাকএন্ডের মেইন এপিআই থেকে ডাটা এনে ইউজারের আইডি দিয়ে ফিল্টার করছি
+            const res = await fetch(`http://localhost:5000/api/gadgets`, {
+                cache: 'no-store'
+            });
+            const json = await res.json();
+
+            if (json.success && Array.isArray(json.data)) {
+                // শুধুমাত্র বর্তমান ইউজারের আপলোড করা আইটেম ফিল্টার করা হচ্ছে
+                // (নোট: আপনার ব্যাকএন্ডে ফিল্ডের নাম userId বা addedBy হতে পারে, সেটি মিলিয়ে নেবেন)
+                const userOwnedItems = json.data.filter(
+                    (item: any) => item.userId === userId || item.addedBy === userId
+                );
+                setItems(userOwnedItems);
+            }
+        } catch (error) {
+            console.error('Failed to fetch items:', error);
+            toast.error('ইনভেন্টরি ডাটা লোড করতে সমস্যা হয়েছে।');
+        } finally {
+            setLoading(false);
         }
     };
 
+    // 🛡️ সিকিউরিটি এবং ইনিশিয়াল ডাটা লোড
+    useEffect(() => {
+        if (!isPending && !session?.user) {
+            toast.error("Please login to manage your gear!", { autoClose: 3000 });
+            router.push('/login');
+            return;
+        }
+
+        if (session?.user?.id) {
+            fetchUserItems(session.user.id);
+        }
+    }, [session, isPending, router]);
+
+    // 🗑️ ডাটাবেজ থেকে আইটেম ডিলিট করার রিয়েল-টাইম লজিক
+    const handleDelete = async (id: string) => {
+        const confirmDelete = window.confirm("Are you sure you want to remove this listing permanently?");
+        if (!confirmDelete) return;
+
+        setDeleteLoadingId(id);
+        try {
+            const res = await fetch(`http://localhost:5000/api/gadgets/${id}`, {
+                method: 'DELETE',
+            });
+            const json = await res.json();
+
+            if (json.success) {
+                // সফল হলে রিয়েল-টাইমে স্টেট থেকে বাদ যাবে
+                setItems(prevItems => prevItems.filter(item => item._id !== id));
+                toast.success("🎉 Listing removed successfully!");
+            } else {
+                toast.error(json.message || "Failed to delete item.");
+            }
+        } catch (error) {
+            console.error('Delete error:', error);
+            toast.error('সার্ভারে সমস্যা হয়েছে, আবার চেষ্টা করুন।');
+        } finally {
+            setDeleteLoadingId(null);
+        }
+    };
+
+    if (isPending || (session?.user && loading)) {
+        return <div className="text-center py-20 text-gray-500 text-sm">Loading your gear matrix...</div>;
+    }
+
+    if (!session?.user) return null;
+
     return (
         <div className="min-h-screen bg-gray-50 py-10">
+            <ToastContainer position="top-center" />
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Top Management Header Section */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 border-b border-gray-100 pb-5">
                     <div>
                         <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Manage Your Gear Inventory</h1>
-                        <p className="mt-1 text-sm text-gray-500">Edit prices, track active rental statuses, or update your listed gear.</p>
+                        <p className="mt-1 text-sm text-gray-500">Track your listed products, active rental statuses, or update listings.</p>
                     </div>
                     <Link href="/items/add">
                         <Button className="bg-indigo-600 hover:bg-indigo-500 text-white font-bold px-5 py-2.5 rounded-xl text-sm transition-all shadow-sm cursor-pointer">
@@ -89,12 +132,18 @@ export default function ManageItemsPage() {
                             <tbody className="divide-y divide-gray-100 text-sm">
                                 {items.length > 0 ? (
                                     items.map((item) => (
-                                        <tr key={item.id} className="hover:bg-gray-50/50 transition-colors">
+                                        <tr key={item._id} className="hover:bg-gray-50/50 transition-colors">
 
                                             {/* Image + Title */}
                                             <td className="py-4 px-6 flex items-center space-x-4">
                                                 <div className="h-12 w-12 rounded-xl bg-gray-100 overflow-hidden border border-gray-100 flex-shrink-0">
-                                                    <img src={item.img} alt={item.title} className="w-full h-full object-cover" />
+                                                    <Image
+                                                        src={item.images?.[0] || "https://placehold.co/150"}
+                                                        width={150}
+                                                        height={150}
+                                                        alt={item.title}
+                                                        className="w-full h-full object-cover"
+                                                    />
                                                 </div>
                                                 <span className="font-bold text-gray-800 line-clamp-1 max-w-xs">{item.title}</span>
                                             </td>
@@ -111,30 +160,37 @@ export default function ManageItemsPage() {
 
                                             {/* Total Rented Analytics */}
                                             <td className="py-4 px-6 text-gray-600 font-semibold">
-                                                {item.totalRents} times
+                                                {item.totalRents || 0} times
                                             </td>
 
                                             {/* Conditional Status Badges */}
                                             <td className="py-4 px-6">
-                                                <span className={`text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-full ${item.status === 'Available' ? 'bg-emerald-50 text-emerald-600' : 'bg-amber-50 text-amber-600'
+                                                <span className={`text-[10px] uppercase font-extrabold tracking-wider px-2.5 py-1 rounded-full ${item.status === 'Available' || item.status === 'approved'
+                                                    ? 'bg-emerald-50 text-emerald-600'
+                                                    : item.status === 'pending'
+                                                        ? 'bg-amber-50 text-amber-600'
+                                                        : 'bg-blue-50 text-blue-600'
                                                     }`}>
-                                                    {item.status}
+                                                    {item.status === 'approved' ? 'Available' : item.status}
                                                 </span>
                                             </td>
 
                                             {/* Dynamic Action Controls */}
                                             <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
+                                                {/* View Button: নির্দিষ্ট প্রোডাক্টের ডিটেইলস পেজে নিয়ে যাবে */}
+                                                <Link href={`/items/${item._id}`}>
+                                                    <Button className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold px-3 py-1.5 rounded-lg transition-all cursor-pointer">
+                                                        View
+                                                    </Button>
+                                                </Link>
+
+                                                {/* Delete Button */}
                                                 <Button
-                                                    onClick={() => alert(`Redirecting to edit page for ID: ${item.id}`)}
-                                                    className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold px-3 py-1.5 rounded-lg transition-all cursor-pointer"
+                                                    disabled={deleteLoadingId === item._id}
+                                                    onClick={() => handleDelete(item._id)}
+                                                    className="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-3 py-1.5 rounded-lg transition-all cursor-pointer disabled:opacity-50"
                                                 >
-                                                    Edit
-                                                </Button>
-                                                <Button
-                                                    onClick={() => handleDelete(item.id)}
-                                                    className="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-3 py-1.5 rounded-lg transition-all cursor-pointer"
-                                                >
-                                                    Delete
+                                                    {deleteLoadingId === item._id ? 'Deleting...' : 'Delete'}
                                                 </Button>
                                             </td>
 

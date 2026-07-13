@@ -21,29 +21,66 @@ export default function ExplorePage() {
     const fetchGadgets = async () => {
         setLoading(true);
         try {
-            // কুয়েরি স্ট্রিং তৈরি করা হচ্ছে
-            const queryParams = new URLSearchParams({
-                search,
-                category,
-                maxPrice,
+            // ১. একটি ডাইনামিক অবজেক্ট তৈরি করুন
+            const params: Record<string, string> = {
                 sortBy,
                 order,
                 page: page.toString(),
-                limit: '6' // প্রতি পেজে ৬টি করে কার্ড দেখাবে
-            });
+                limit: '6'
+            };
+
+            // ২. শুধুমাত্র ভ্যালু থাকলেই কুয়েরিতে যোগ করুন (খালি স্ট্রিং বাদ যাবে)
+            if (search.trim()) params.search = search;
+            if (category) params.category = category;
+            if (maxPrice) params.maxPrice = maxPrice;
+
+            const queryParams = new URLSearchParams(params);
+
+            console.log("Fetching from URL:", `http://localhost:5000/api/gadgets?${queryParams.toString()}`); // 💡 ডিবাগিং এর জন্য
 
             const res = await fetch(`http://localhost:5000/api/gadgets?${queryParams.toString()}`);
             const json = await res.json();
+
             if (json.success) {
                 setGadgets(json.data);
-                setTotalPages(json.meta.totalPages);
+                // 💡 মেটা ডাটা বা টোটাল পেজ অপশনাল চেইনিং দিয়ে সেফ রাখুন
+                setTotalPages(json.meta?.totalPages || 1);
+            } else {
+                setGadgets([]);
             }
         } catch (error) {
             console.error('Failed to fetch gadgets', error);
+            setGadgets([]); // এরর খেলে স্টেট খালি করে দিন
         } finally {
             setLoading(false);
         }
     };
+    // const fetchGadgets = async () => {
+    //     setLoading(true);
+    //     try {
+    //         // কুয়েরি স্ট্রিং তৈরি করা হচ্ছে
+    //         const queryParams = new URLSearchParams({
+    //             search,
+    //             category,
+    //             maxPrice,
+    //             sortBy,
+    //             order,
+    //             page: page.toString(),
+    //             limit: '6' // প্রতি পেজে ৬টি করে কার্ড দেখাবে
+    //         });
+
+    //         const res = await fetch(`http://localhost:5000/api/gadgets?${queryParams.toString()}`);
+    //         const json = await res.json();
+    //         if (json.success) {
+    //             setGadgets(json.data);
+    //             setTotalPages(json.meta.totalPages);
+    //         }
+    //     } catch (error) {
+    //         console.error('Failed to fetch gadgets', error);
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
 
     // যখনই কোনো ফিল্টার বা পেজ চেঞ্জ হবে, তখনই ডাটা রি-লোড হবে
     useEffect(() => {

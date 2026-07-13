@@ -27,7 +27,6 @@ export default async function GadgetDetailsPage({ params }: ParamProps) {
 
     const result = await res.json();
     const gadget: Gadget = result.data;
-    // console.log('Gadget Details:', gadget); // ডাটা কনসোল লগে দেখানো হচ্ছে
 
     return (
         <div className="container mx-auto px-4 py-10 max-w-6xl">

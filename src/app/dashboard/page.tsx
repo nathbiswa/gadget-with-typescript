@@ -20,14 +20,34 @@ interface PopulatedBooking {
         images: string[];
         category: string;
         pricePerDay: number;
-    } | null; // যদি কোনো কারণে গ্যাজেটটি ডাটাবেজ থেকে ডিলেট হয়ে যায়
+    } | null;
 }
+
+// 🗓️ তারিখ সুন্দরভাবে দেখানোর জন্য হেল্পার ফাংশন (e.g., 2026-07-13 -> Jul 13, 2026)
+const formatDate = (dateString: string) => {
+    if (!dateString) return 'N/A';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', {
+        month: 'short',
+        day: 'numeric',
+        year: 'numeric',
+    });
+};
+
+// 🎨 স্ট্যাটাস অনুযায়ী ব্যাজের আলাদা আলাদা কালার ম্যাপিং
+const statusStyles: Record<PopulatedBooking['status'], string> = {
+    pending: 'bg-amber-50 text-amber-700 border border-amber-200',
+    confirmed: 'bg-blue-50 text-blue-700 border border-blue-200',
+    completed: 'bg-green-50 text-green-700 border border-green-200',
+    cancelled: 'bg-rose-50 text-rose-700 border border-rose-200',
+};
 
 export default function UserDashboard() {
     const [bookings, setBookings] = useState<PopulatedBooking[]>([]);
     const [loading, setLoading] = useState(true);
 
     // Better Auth থেকে কারেন্ট ইউজার আইডি (আপাতত আগের টেস্ট আইডি ব্যবহার করছি)
+    // 💡 টিপস: Better Auth ব্যবহার করলে এখানে const { data: session } = auth.useSession(); থেকে session.user.id পাবেন।
     const currentUserId = "auth_user_123";
 
     useEffect(() => {
@@ -47,8 +67,10 @@ export default function UserDashboard() {
             }
         };
 
-        fetchDashboardData();
-    }, []);
+        if (currentUserId) {
+            fetchDashboardData();
+        }
+    }, [currentUserId]);
 
     return (
         <div className="container mx-auto px-4 py-10 max-w-6xl">
@@ -63,7 +85,10 @@ export default function UserDashboard() {
                 <h2 className="text-xl font-bold text-gray-800 mb-6">My Rental History</h2>
 
                 {loading ? (
-                    <div className="text-center py-10 text-gray-400 font-medium">Loading your rental history...</div>
+                    <div className="flex flex-col items-center justify-center py-20 gap-3">
+                        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+                        <div className="text-gray-400 font-medium text-sm">Loading your rental history...</div>
+                    </div>
                 ) : bookings.length > 0 ? (
                     <div className="overflow-x-auto">
                         <table className="w-full text-left border-collapse">
@@ -91,7 +116,7 @@ export default function UserDashboard() {
                                                     />
                                                 </div>
                                                 <div>
-                                                    <h4 className="font-bold text-gray-800 line-clamp-1">
+                                                    <h4 className="font-bold text-gray-800 line-clamp-1 max-w-[250px]">
                                                         {gadget?.title || "Unknown Gadget"}
                                                     </h4>
                                                     <span className="bg-gray-100 text-gray-500 text-[10px] font-semibold px-2 py-0.5 rounded-md mt-1 inline-block">
@@ -100,25 +125,23 @@ export default function UserDashboard() {
                                                 </div>
                                             </td>
 
-                                            {/* ২. লিজের মেয়াদ */}
-                                            <td className="py-4 text-gray-600 font-medium">
-                                                <div className="text-xs">{booking.startDate}</div>
-                                                <div className="text-gray-400 text-[11px]">to</div>
-                                                <div className="text-xs">{booking.endDate}</div>
+                                            {/* ২. লিজের মেয়াদ */}
+                                            <td className="py-4 text-gray-600 font-semibold">
+                                                <div className="text-xs text-gray-700">{formatDate(booking.startDate)}</div>
+                                                <div className="text-gray-400 text-[10px] my-0.5 uppercase tracking-wider font-bold">to</div>
+                                                <div className="text-xs text-gray-700">{formatDate(booking.endDate)}</div>
                                             </td>
 
                                             {/* ৩. মোট খরচ */}
-                                            <td className="py-4 font-bold text-indigo-600">
-                                                ৳{booking.totalCost}
+                                            <td className="py-4 font-black text-indigo-600 text-base">
+                                                ৳{booking.totalCost.toLocaleString('en-IN')}
                                             </td>
 
                                             {/* ৪. স্ট্যাটাস ব্যাজ */}
                                             <td className="py-4">
-                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold ${booking.status === 'confirmed' ? 'bg-green-50 text-green-700' :
-                                                    booking.status === 'pending' ? 'bg-amber-50 text-amber-700' :
-                                                        'bg-gray-50 text-gray-600'
-                                                    }`}>
-                                                    ● {booking.status.charAt(0).toUpperCase() + booking.status.slice(1)}
+                                                <span className={`inline-flex items-center px-2.5 py-1 rounded-full text-xs font-bold ${statusStyles[booking.status] || 'bg-gray-50 text-gray-600'}`}>
+                                                    <span className="w-1.5 h-1.5 rounded-full bg-current mr-1.5"></span>
+                                                    {booking.status.toUpperCase()}
                                                 </span>
                                             </td>
 
@@ -132,7 +155,7 @@ export default function UserDashboard() {
                                                         View Gear
                                                     </Link>
                                                 ) : (
-                                                    <span className="text-xs text-gray-400">Unavailable</span>
+                                                    <span className="text-xs text-gray-400 font-medium bg-gray-50 px-2.5 py-1.5 rounded-lg border border-gray-100">Unavailable</span>
                                                 )}
                                             </td>
                                         </tr>
@@ -142,11 +165,11 @@ export default function UserDashboard() {
                         </table>
                     </div>
                 ) : (
-                    <div className="text-center py-12 border border-dashed rounded-2xl">
-                        <p className="text-gray-400 text-sm mb-4">You haven't rented any gear yet.</p>
+                    <div className="text-center py-16 border border-dashed border-gray-200 rounded-2xl bg-gray-50/30">
+                        <p className="text-gray-400 text-sm mb-4 font-medium">You haven't rented any gear yet.</p>
                         <Link
                             href="/explore"
-                            className="bg-indigo-600 text-white text-xs font-bold px-4 py-2.5 rounded-xl hover:bg-indigo-700 transition inline-block shadow-sm"
+                            className="bg-indigo-600 text-white text-xs font-bold px-5 py-3 rounded-xl hover:bg-indigo-700 transition inline-block shadow-sm shadow-indigo-100"
                         >
                             Browse Premium Gear
                         </Link>
