@@ -109,8 +109,10 @@ export default function UserDashboard() {
                                             {/* ১. গ্যাজেট ইনফো (ইমেজ + টাইটেল) */}
                                             <td className="py-4 flex items-center gap-4">
                                                 <div className="relative h-14 w-14 rounded-xl overflow-hidden bg-gray-50 border border-gray-100 flex-shrink-0">
-                                                    <img
+                                                    <Image
                                                         src={gadget && gadget.images?.length > 0 ? gadget.images[0] : 'https://placehold.co/100'}
+                                                        width={100}
+                                                        height={100}
                                                         alt={gadget?.title || "Deleted Gadget"}
                                                         className="w-full h-full object-cover"
                                                     />

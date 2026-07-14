@@ -6,10 +6,10 @@ import { authClient } from '@/lib/auth-client';
 import { Check } from "@gravity-ui/icons";
 import { Button, Form, Input, Label, TextField, FieldError } from "@heroui/react";
 import { toast } from 'react-toastify';
-
 export default function AddItemPage() {
     const router = useRouter();
     const { data: session, isPending } = authClient.useSession();
+    const formRef = useRef<HTMLFormElement>(null);
 
     const [successMessage, setSuccessMessage] = useState<string>('');
     const [errorMessage, setErrorMessage] = useState<string>('');
@@ -60,10 +60,30 @@ export default function AddItemPage() {
         }
     };
 
+
+
     const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+
         e.preventDefault();
         setSuccessMessage('');
         setErrorMessage('');
+
+        let token = '';
+        try {
+            const res = await authClient.token();
+
+            if (res.error) {
+                console.error("AuthClient Error:", res.error);
+            }
+
+            if (res.data) {
+                token = res.data.token; // 🎯 আসল টোকেন এখানে থাকে
+            }
+        } catch (error) {
+            console.error("Token catch block error:", error);
+        }
+
+        // console.log("Token:", token);
 
         if (!session?.user?.id) {
             setErrorMessage("You must be logged in to list an item.");
@@ -97,12 +117,13 @@ export default function AddItemPage() {
                 images: uploadedImageUrls, // 🎯 ImgBB থেকে পাওয়া আসল লিঙ্কগুলো যাচ্ছে
                 userId: session.user.id
             };
-            console.log("Payload to be sent:", payload);
+            // console.log("Payload to be sent:", payload);
             // ৩. ব্যাকএন্ড API-তে ডাটা পাঠানো
             const response = await fetch('http://localhost:5000/api/items/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`,
                 },
                 body: JSON.stringify(payload),
             });
@@ -112,7 +133,8 @@ export default function AddItemPage() {
             if (result.success) {
                 toast.success('🎉 Gadget successfully submitted! Waiting for admin approval.');
                 setSuccessMessage('🎉 Gadget successfully submitted! Waiting for admin approval.');
-                e.currentTarget.reset();
+                // 🎯 currentTarget এর বদলে ref ব্যবহার করে রিসেট করুন
+                formRef.current?.reset();
                 setSelectedImages([]);
             } else {
                 toast.error(result.message || 'Something went wrong.');
@@ -141,7 +163,7 @@ export default function AddItemPage() {
 
                 {/* Page Header */}
                 <div className="mb-8 border-b border-gray-100 pb-4">
-                    <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">List a New Gadget</h1>
+                    <h1 className="text-xl md:text-3xl font-extrabold text-gray-900 tracking-tight">List a New Gadget</h1>
                     <p className="mt-2 text-sm text-gray-500">
                         Fill in the details below to make your premium tech gear available for rent.
                     </p>
@@ -160,7 +182,7 @@ export default function AddItemPage() {
                 )}
 
                 {/* ⚡ HeroUI v3 Form Component */}
-                <Form className="flex flex-col gap-6" onSubmit={onSubmit} onReset={handleReset}>
+                <Form ref={formRef} className="flex flex-col gap-6" onSubmit={onSubmit} onReset={handleReset}>
 
                     {/* Gadget Title */}
                     <TextField

@@ -113,11 +113,30 @@ export default function AdminDashboard() {
 
   // ⚡ স্ট্যাটাস আপডেট হ্যান্ডলার (Approve/Reject)
   const handleStatusUpdate = async (id: string, newStatus: 'approved' | 'rejected') => {
+    let token = '';
+    try {
+      const res = await authClient.token();
+
+      if (res.error) {
+        console.error("AuthClient Error:", res.error);
+      }
+
+      if (res.data) {
+        token = res.data.token; // 🎯 আসল টোকেন এখানে থাকে
+      }
+    } catch (error) {
+      console.error("Token catch block error:", error);
+    }
+    console.log("Token:", token);
+
     setActionLoadingId(id);
     try {
       const res = await fetch(`http://localhost:5000/api/gadgets/${id}/status`, {
         method: 'PATCH',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ status: newStatus }),
       });
 
@@ -140,6 +159,21 @@ export default function AdminDashboard() {
   // নতুন গ্যাজেট সাবমিট হ্যান্ডলার (অ্যাডমিনের নিজের প্রোডাক্ট সরাসরি approved থাকবে)
   const handleAddGadget = async (e: React.FormEvent) => {
     e.preventDefault();
+    let token = '';
+    try {
+      const res = await authClient.token();
+
+      if (res.error) {
+        console.error("AuthClient Error:", res.error);
+      }
+
+      if (res.data) {
+        token = res.data.token; // 🎯 আসল টোকেন এখানে থাকে
+      }
+    } catch (error) {
+      console.error("Token catch block error:", error);
+    }
+    console.log("Token:", token);
     try {
       const gadgetPayload = {
         ...formData,
@@ -151,7 +185,10 @@ export default function AdminDashboard() {
 
       const res = await fetch('http://localhost:5000/api/items/add', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`,
+        },
         body: JSON.stringify(gadgetPayload)
       });
 

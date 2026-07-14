@@ -66,6 +66,22 @@ export default function ManageItemsPage() {
 
     // 🗑️ ডাটাবেজ থেকে আইটেম ডিলিট করার রিয়েল-টাইম লজিক
     const handleDelete = async (id: string) => {
+        let token = '';
+        try {
+            const res = await authClient.token();
+
+            if (res.error) {
+                console.error("AuthClient Error:", res.error);
+            }
+
+            if (res.data) {
+                token = res.data.token; // 🎯 আসল টোকেন এখানে থাকে
+            }
+        } catch (error) {
+            console.error("Token catch block error:", error);
+        }
+        console.log("Token:", token);
+
         const confirmDelete = window.confirm("Are you sure you want to remove this listing permanently?");
         if (!confirmDelete) return;
 
@@ -73,6 +89,9 @@ export default function ManageItemsPage() {
         try {
             const res = await fetch(`http://localhost:5000/api/gadgets/${id}`, {
                 method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                },
             });
             const json = await res.json();
 
@@ -105,7 +124,7 @@ export default function ManageItemsPage() {
                 {/* Top Management Header Section */}
                 <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 border-b border-gray-100 pb-5">
                     <div>
-                        <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Manage Your Gear Inventory</h1>
+                        <h1 className="text-xl md:text-3xl font-extrabold text-gray-900 tracking-tight">Manage Your Gear Inventory</h1>
                         <p className="mt-1 text-sm text-gray-500">Track your listed products, active rental statuses, or update listings.</p>
                     </div>
                     <Link href="/items/add">
@@ -117,7 +136,78 @@ export default function ManageItemsPage() {
 
                 {/* 📊 Inventory Dashboard Data Table */}
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                    <div className="overflow-x-auto">
+
+                    {/* 📱 Mobile Layout: ছোট স্ক্রিনে টেবিল হাইড হয়ে কার্ড আকারে দেখাবে (hidden md:block) */}
+                    <div className="block md:hidden divide-y divide-gray-100">
+                        {items.length > 0 ? (
+                            items.map((item) => (
+                                <div key={item._id} className="p-4 flex flex-col gap-3 hover:bg-gray-50/50 transition-colors">
+                                    {/* Item Details */}
+                                    <div className="flex items-center space-x-4">
+                                        <div className="h-14 w-14 rounded-xl bg-gray-100 overflow-hidden border border-gray-100 flex-shrink-0">
+                                            <Image
+                                                src={item.images?.[0] || "https://placehold.co/150"}
+                                                width={150}
+                                                height={150}
+                                                alt={item.title}
+                                                className="w-full h-full object-cover"
+                                            />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <h4 className="font-bold text-gray-800 truncate text-base">{item.title}</h4>
+                                            <p className="text-xs text-gray-500 font-medium mt-0.5">{item.category}</p>
+                                        </div>
+                                    </div>
+
+                                    {/* Metadata Analytics */}
+                                    <div className="grid grid-cols-3 gap-2 bg-gray-50/70 rounded-xl p-2.5 text-xs">
+                                        <div>
+                                            <span className="block text-gray-400 text-[10px] uppercase font-bold tracking-wider">Price / Day</span>
+                                            <span className="font-bold text-indigo-600">৳{item.pricePerDay}</span>
+                                        </div>
+                                        <div>
+                                            <span className="block text-gray-400 text-[10px] uppercase font-bold tracking-wider">Total Rented</span>
+                                            <span className="font-semibold text-gray-600">{item.totalRents || 0} times</span>
+                                        </div>
+                                        <div>
+                                            <span className="block text-gray-400 text-[10px] uppercase font-bold tracking-wider mb-0.5">Status</span>
+                                            <span className={`text-[9px] uppercase font-extrabold tracking-wider px-2 py-0.5 rounded-full inline-block ${item.status === 'Available' || item.status === 'approved'
+                                                ? 'bg-emerald-50 text-emerald-600'
+                                                : item.status === 'pending'
+                                                    ? 'bg-amber-50 text-amber-600'
+                                                    : 'bg-blue-50 text-blue-600'
+                                                }`}>
+                                                {item.status === 'approved' ? 'Available' : item.status}
+                                            </span>
+                                        </div>
+                                    </div>
+
+                                    {/* Action Buttons */}
+                                    <div className="flex items-center justify-end gap-2 pt-1">
+                                        <Link href={`/explore/${item._id}`} className="flex-1 sm:flex-none">
+                                            <Button className="w-full bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold px-4 py-2 rounded-lg transition-all cursor-pointer">
+                                                View
+                                            </Button>
+                                        </Link>
+                                        <Button
+                                            disabled={deleteLoadingId === item._id}
+                                            onClick={() => handleDelete(item._id)}
+                                            className="flex-1 sm:flex-none bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-4 py-2 rounded-lg transition-all cursor-pointer disabled:opacity-50"
+                                        >
+                                            {deleteLoadingId === item._id ? 'Deleting...' : 'Delete'}
+                                        </Button>
+                                    </div>
+                                </div>
+                            ))
+                        ) : (
+                            <div className="text-center py-12 text-gray-400 font-medium p-4">
+                                Your gear inventory is completely empty. Start by adding an item!
+                            </div>
+                        )}
+                    </div>
+
+                    {/* 💻 Desktop Layout: মাঝারি এবং বড় স্ক্রিনে প্রথাগত টেবিল দেখাবে (hidden md:block) */}
+                    <div className="hidden md:block overflow-x-auto">
                         <table className="w-full text-left border-collapse">
                             <thead>
                                 <tr className="bg-gray-50/75 border-b border-gray-100 text-xs font-bold uppercase tracking-wider text-gray-500">
@@ -133,7 +223,6 @@ export default function ManageItemsPage() {
                                 {items.length > 0 ? (
                                     items.map((item) => (
                                         <tr key={item._id} className="hover:bg-gray-50/50 transition-colors">
-
                                             {/* Image + Title */}
                                             <td className="py-4 px-6 flex items-center space-x-4">
                                                 <div className="h-12 w-12 rounded-xl bg-gray-100 overflow-hidden border border-gray-100 flex-shrink-0">
@@ -177,14 +266,11 @@ export default function ManageItemsPage() {
 
                                             {/* Dynamic Action Controls */}
                                             <td className="py-4 px-6 text-right space-x-2 whitespace-nowrap">
-                                                {/* View Button: নির্দিষ্ট প্রোডাক্টের ডিটেইলস পেজে নিয়ে যাবে */}
-                                                <Link href={`/items/${item._id}`}>
+                                                <Link href={`/explore/${item._id}`}>
                                                     <Button className="bg-indigo-50 hover:bg-indigo-100 text-indigo-600 text-xs font-bold px-3 py-1.5 rounded-lg transition-all cursor-pointer">
                                                         View
                                                     </Button>
                                                 </Link>
-
-                                                {/* Delete Button */}
                                                 <Button
                                                     disabled={deleteLoadingId === item._id}
                                                     onClick={() => handleDelete(item._id)}
@@ -193,7 +279,6 @@ export default function ManageItemsPage() {
                                                     {deleteLoadingId === item._id ? 'Deleting...' : 'Delete'}
                                                 </Button>
                                             </td>
-
                                         </tr>
                                     ))
                                 ) : (
