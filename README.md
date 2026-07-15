@@ -12,8 +12,8 @@
 
 ## 🚀 Live Demo
 
-* **Frontend (Vercel):** [gadget-with-typescript.vercel.app](https://gadget-with-typescript.vercel.app)
-* **Backend API (Render):** [gadgetlease-server.onrender.com](https://gadgetlease-server.onrender.com)
+* **Frontend (Vercel):** <a href="https://gadget-with-typescript.vercel.app" target="_blank" rel="noopener noreferrer">gadget-with-typescript.vercel.app</a>
+* **Backend API (Render):** <a href="https://gadgetlease-server.onrender.com" target="_blank" rel="noopener noreferrer">gadgetlease-server.onrender.com</a>
 
 ---
 
