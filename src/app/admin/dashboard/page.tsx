@@ -34,12 +34,11 @@ export default function AdminDashboard() {
   // 🛡️ সেশন সিকিউরিটি ও গ্লোবাল বুকিং লোড
   // 🎯 আপনার ফাইলের ৩3 নম্বর লাইন থেকে শুরু হওয়া প্রথম useEffect-টি এটি দিয়ে রিপ্লেস করুন:
   useEffect(() => {
-    if (!isPending && (!session?.user || session.user.role !== 'admin')) {
+    if (!isPending && (!session?.user || (session.user as any).role !== 'admin')) {
       toast.error("Access Denied! Admins only.", { autoClose: 5000 });
       router.push('/login');
       return;
     }
-
     if (session?.user) {
       setLoadingBookings(true);
 
@@ -63,27 +62,7 @@ export default function AdminDashboard() {
         });
     }
   }, [session, isPending, router]);
-  // useEffect(() => {
-  //   if (!isPending && (!session?.user || session.user.role !== 'admin')) {
-  //     toast.error("Access Denied! Admins only.", { autoClose: 5000 });
-  //     router.push('/login');
-  //     return;
-  //   }
 
-  //   if (session?.user?.id) {
-  //     setLoadingBookings(true);
-  //     fetch(`https://gadgetlease-server.onrender.com/api/admin/bookings?email=${session.user.email}`)
-  //       .then(res => res.json())
-  //       .then(json => {
-  //         if (json.success) setAllBookings(json.data);
-  //         setLoadingBookings(false);
-  //       })
-  //       .catch(err => {
-  //         console.error("Admin Fetch Error:", err);
-  //         setLoadingBookings(false);
-  //       });
-  //   }
-  // }, [session, isPending, router]);
 
   // 📥 ইউজারদের পাঠানো পেন্ডিং গ্যাজেট ফেচ করার নতুন লজিক
   const fetchPendingGadgets = async () => {
