@@ -152,7 +152,7 @@ export default function AdminDashboard() {
     } catch (error) {
       console.error("Token catch block error:", error);
     }
-    console.log("Token:", token);
+
     try {
       const gadgetPayload = {
         ...formData,
@@ -186,7 +186,7 @@ export default function AdminDashboard() {
   };
 
   if (isPending) return <div className="text-center py-20">Verifying admin session...</div>;
-  if (!session?.user || session.user.role !== 'admin') return null;
+  if (!session?.user || (session.user as any).role !== 'admin') return null;
 
   return (
     <div className="container mx-auto px-4 py-10 max-w-6xl">
