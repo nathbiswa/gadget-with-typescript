@@ -15,7 +15,7 @@ interface NavItem {
 export default function Navbar() {
   const { data: session } = authClient.useSession();
   const user = session?.user;
-  const isAdmin = user?.role === 'admin';
+  const isAdmin = (user as { role?: string })?.role === 'admin';
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const pathname = usePathname();
