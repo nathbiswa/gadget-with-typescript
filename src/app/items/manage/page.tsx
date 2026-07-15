@@ -30,7 +30,7 @@ export default function ManageItemsPage() {
     const fetchUserItems = async (userId: string) => {
         try {
             // ব্যাকএন্ডের মেইন এপিআই থেকে ডাটা এনে ইউজারের আইডি দিয়ে ফিল্টার করছি
-            const res = await fetch(`http://localhost:5000/api/gadgets`, {
+            const res = await fetch(`https://gadgetlease-server.onrender.com/api/gadgets`, {
                 cache: 'no-store'
             });
             const json = await res.json();
@@ -87,7 +87,7 @@ export default function ManageItemsPage() {
 
         setDeleteLoadingId(id);
         try {
-            const res = await fetch(`http://localhost:5000/api/gadgets/${id}`, {
+            const res = await fetch(`https://gadgetlease-server.onrender.com/api/gadgets/${id}`, {
                 method: 'DELETE',
                 headers: {
                     'Authorization': `Bearer ${token}`,

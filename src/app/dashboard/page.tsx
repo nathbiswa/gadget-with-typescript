@@ -53,7 +53,7 @@ export default function UserDashboard() {
     useEffect(() => {
         const fetchDashboardData = async () => {
             try {
-                const res = await fetch(`http://localhost:5000/api/bookings/user/${currentUserId}`, {
+                const res = await fetch(`https://gadgetlease-server.onrender.com/api/bookings/user/${currentUserId}`, {
                     cache: 'no-store'
                 });
                 const json = await res.json();

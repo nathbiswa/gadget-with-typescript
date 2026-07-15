@@ -36,9 +36,9 @@ export default function ExplorePage() {
 
             const queryParams = new URLSearchParams(params);
 
-            console.log("Fetching from URL:", `http://localhost:5000/api/gadgets?${queryParams.toString()}`); // 💡 ডিবাগিং এর জন্য
+            console.log("Fetching from URL:", `https://gadgetlease-server.onrender.com/api/gadgets?${queryParams.toString()}`); // 💡 ডিবাগিং এর জন্য
 
-            const res = await fetch(`http://localhost:5000/api/gadgets?${queryParams.toString()}`);
+            const res = await fetch(`https://gadgetlease-server.onrender.com/api/gadgets?${queryParams.toString()}`);
             const json = await res.json();
 
             if (json.success) {
@@ -69,7 +69,7 @@ export default function ExplorePage() {
     //             limit: '6' // প্রতি পেজে ৬টি করে কার্ড দেখাবে
     //         });
 
-    //         const res = await fetch(`http://localhost:5000/api/gadgets?${queryParams.toString()}`);
+    //         const res = await fetch(`https://gadgetlease-server.onrender.com/api/gadgets?${queryParams.toString()}`);
     //         const json = await res.json();
     //         if (json.success) {
     //             setGadgets(json.data);
@@ -211,7 +211,7 @@ export default function ExplorePage() {
 // export default async function ExplorePage() {
 
 //     // সব গ্যাজেট আনার এপিআই কল
-//     const res = await fetch(`${process.env.BASE_URL}/api/gadgets`, {
+//     const res = await fetch(`${https://gadgetlease-server.onrender.com}/api/gadgets`, {
 //         cache: 'no-store' // সবসময় একদম লেটেস্ট ডাটা দেখাবে
 //     });
 

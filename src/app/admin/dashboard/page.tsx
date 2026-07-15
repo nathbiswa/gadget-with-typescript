@@ -47,7 +47,7 @@ export default function AdminDashboard() {
       const email = session.user.email;
       const userId = session.user.id;
 
-      fetch(`http://localhost:5000/api/admin/bookings?email=${email}&userId=${userId}`)
+      fetch(`https://gadgetlease-server.onrender.com/api/admin/bookings?email=${email}&userId=${userId}`)
         .then(res => res.json())
         .then(json => {
           if (json.success) {
@@ -72,7 +72,7 @@ export default function AdminDashboard() {
 
   //   if (session?.user?.id) {
   //     setLoadingBookings(true);
-  //     fetch(`http://localhost:5000/api/admin/bookings?email=${session.user.email}`)
+  //     fetch(`https://gadgetlease-server.onrender.com/api/admin/bookings?email=${session.user.email}`)
   //       .then(res => res.json())
   //       .then(json => {
   //         if (json.success) setAllBookings(json.data);
@@ -90,7 +90,7 @@ export default function AdminDashboard() {
     setLoadingPending(true);
     try {
       // আমরা মাত্র ব্যাকএন্ডে যে নতুন এপিআই বানালাম, সেখান থেকে ডাটা আনছি
-      const res = await fetch(`http://localhost:5000/api/admin/pending-gadgets`, {
+      const res = await fetch(`https://gadgetlease-server.onrender.com/api/admin/pending-gadgets`, {
         cache: 'no-store'
       });
       const json = await res.json();
@@ -131,7 +131,7 @@ export default function AdminDashboard() {
 
     setActionLoadingId(id);
     try {
-      const res = await fetch(`http://localhost:5000/api/gadgets/${id}/status`, {
+      const res = await fetch(`https://gadgetlease-server.onrender.com/api/gadgets/${id}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -183,7 +183,7 @@ export default function AdminDashboard() {
         status: 'approved' // 🔒 অ্যাডমিন নিজে পোস্ট করলে সরাসরি লাইভ হবে
       };
 
-      const res = await fetch('http://localhost:5000/api/items/add', {
+      const res = await fetch('https://gadgetlease-server.onrender.com/api/items/add', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -422,7 +422,7 @@ export default function AdminDashboard() {
 //   useEffect(() => {
 //     const fetchAdminData = async () => {
 //       try {
-//         const res = await fetch(`http://localhost:5000/api/admin/bookings?email=${currentUserEmail}`, {
+//         const res = await fetch(`https://gadgetlease-server.onrender.com/api/admin/bookings?email=${currentUserEmail}`, {
 //           headers: {
 //             'Content-Type': 'application/json',
 //           },

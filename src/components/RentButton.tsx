@@ -37,7 +37,7 @@ export default function RentButton({ gadgetId, pricePerDay }: RentButtonProps) {
                 totalCost: pricePerDay * 3 // ৩ দিনের মোট খরচ
             };
 
-            const res = await fetch('http://localhost:5000/api/bookings', {
+            const res = await fetch('https://gadgetlease-server.onrender.com/api/bookings', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(bookingData)
@@ -109,7 +109,7 @@ export default function RentButton({ gadgetId, pricePerDay }: RentButtonProps) {
 //                 totalCost: pricePerDay * 3 // ধরি ৩ দিনের জন্য লিজ নেওয়া হচ্ছে
 //             };
 
-//             const res = await fetch('http://localhost:5000/api/bookings', {
+//             const res = await fetch('https://gadgetlease-server.onrender.com/api/bookings', {
 //                 method: 'POST',
 //                 headers: { 'Content-Type': 'application/json' },
 //                 body: JSON.stringify(bookingData)

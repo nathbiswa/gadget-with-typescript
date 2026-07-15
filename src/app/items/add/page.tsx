@@ -119,7 +119,7 @@ export default function AddItemPage() {
             };
             // console.log("Payload to be sent:", payload);
             // ৩. ব্যাকএন্ড API-তে ডাটা পাঠানো
-            const response = await fetch('http://localhost:5000/api/items/add', {
+            const response = await fetch('https://gadgetlease-server.onrender.com/api/items/add', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -411,7 +411,7 @@ export default function AddItemPage() {
 //         };
 
 //         try {
-//             const response = await fetch('http://localhost:5000/api/items/add', {
+//             const response = await fetch('https://gadgetlease-server.onrender.com/api/items/add', {
 //                 method: 'POST',
 //                 headers: {
 //                     'Content-Type': 'application/json',

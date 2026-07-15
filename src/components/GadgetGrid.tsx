@@ -6,8 +6,8 @@ import GadgetCard from './GadgetCard';
 export default async function FeaturedGadgets() {
 
   // ব্যাকএন্ডের ফিচারড এপিআই কল করা হচ্ছে
-  const res = await fetch(`${process.env.BASE_URL}/api/gadgets/featured`, {
-    cache: 'no-store', // সবসময় একদম লেটেস্ট ডাটা দেখাবে
+  const res = await fetch(`https://gadgetlease-server.onrender.com/api/gadgets/featured`, {
+    cache: 'no-store',
     next: { revalidate: 60 }
   });
 
