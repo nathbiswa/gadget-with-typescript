@@ -24,7 +24,7 @@ export default function LoginPage() {
     }, [session, isPending, router]);
 
     // Form submit handler using FormData
-    const onSubmit = async (e) => {
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const formData = new FormData(e.currentTarget);
