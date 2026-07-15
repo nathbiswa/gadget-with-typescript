@@ -15,12 +15,13 @@ export default function RegisterPage() {
         const formData = new FormData(e.currentTarget);
         const user = Object.fromEntries(formData.entries());
 
+        // 🎯 সবগুলোকে 'as string' লিখে টাইপ কাস্ট করে দেওয়া হলো
         const { data, error } = await authClient.signUp.email({
-            name: user.name,
-            email: user.email,
-            password: user.password,
-            image: user.image
-        })
+            name: user.name as string,
+            email: user.email as string,
+            password: user.password as string,
+            image: user.image ? (user.image as string) : undefined,
+        });
 
 
         if (data) {
