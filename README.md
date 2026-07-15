@@ -1,36 +1,70 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 💻 GadgetLease — Premium Gadget Rental Platform
 
-## Getting Started
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Database-green?style=flat-square&logo=mongodb)](https://www.mongodb.com/)
+[![Render](https://img.shields.io/badge/Render-Backend_Hosting-00c497?style=flat-square&logo=render)](https://render.com/)
+[![Vercel](https://img.shields.io/badge/Vercel-Frontend_Hosting-black?style=flat-square&logo=vercel)](https://vercel.com/)
 
-First, run the development server:
+**GadgetLease** is a modern and secure gadget leasing and rental platform. Users can effortlessly explore, filter, and lease premium gadgets. The frontend is built using **Next.js (TypeScript)**, while the backend authentication and database logic are securely managed on **Render.com** using **Node.js/Express** and **Better Auth**.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+---
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🚀 Live Demo
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* **Frontend (Vercel):** [gadget-with-typescript.vercel.app](https://gadget-with-typescript.vercel.app)
+* **Backend API (Render):** [gadgetlease-server.onrender.com](https://gadgetlease-server.onrender.com)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## ✨ Features & Functionalities
 
-To learn more about Next.js, take a look at the following resources:
+* **Secure Google OAuth:** One-click social login powered by Better Auth.
+* **Dynamic Gadget Listings:** Advanced search, categorization, and brand-based filtering.
+* **Interactive Booking System:** Seamless user experience to rent and track leased gadgets.
+* **Responsive & Modern UI:** Designed with Tailwind CSS and Shadcn UI for pixel-perfect cross-device responsiveness.
+* **Robust Database Integration:** Scalable data modeling using MongoDB Atlas.
+* **Optimized Image Uploads:** Cloud integration via ImgBB API for fast asset delivery.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 🛠️ Tech Stack
 
-## Deploy on Vercel
+### Frontend (Client-side)
+* **Framework:** Next.js (TypeScript)
+* **Authentication:** Better Auth (Client-side integration)
+* **Styling:** Tailwind CSS, Shadcn UI / Aceternity UI
+* **Data Fetching:** Axios / React Query
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Backend (Server-side)
+* **Runtime Environment:** Node.js
+* **Framework:** Express.js
+* **Database:** MongoDB Atlas (Mongoose)
+* **Authentication Engine:** Better Auth SDK
+* **Hosting Platform:** Render.com
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## ⚙️ Environment Variables Setup
+
+To run this project locally, create a `.env` file in the root directories of both your client and server, then configure the variables as shown below:
+
+### Backend `.env` (`.env.local`)
+```env
+# Server Port
+PORT=5000
+
+# Databases
+MONGODB_URI=your_mongodb_connection_string
+
+# Better Auth Configuration
+BETTER_AUTH_SECRET=your_better_auth_secret_key
+BETTER_AUTH_URL=http://localhost:5000 # Use [https://gadgetlease-server.onrender.com](https://gadgetlease-server.onrender.com) in production
+
+# Google Developer Console Keys
+GOOGLE_CLIENT_ID=your_google_client_id
+GOOGLE_CLIENT_SECRET=your_google_client_secret
+
+# Base URL Configuration
+BASE_URL=http://localhost:5000
+NEXT_PUBLIC_SERVER_URL=http://localhost:5000
