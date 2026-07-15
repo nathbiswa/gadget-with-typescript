@@ -4,11 +4,11 @@ import { auth } from './lib/auth';
 
 // This function can be marked `async` if using `await` inside
 
-export async function proxy(request) {
+export async function proxy(request: Request) {
   const session = await auth.api.getSession({
     headers: await headers(), // headers containing the user's session token
   });
-  if (!session && !session?.user) {
+  if (!session || !session.user) {
     return NextResponse.redirect(new URL('/login', request.url));
   }
 }
