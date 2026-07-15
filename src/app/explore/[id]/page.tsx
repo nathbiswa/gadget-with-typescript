@@ -96,7 +96,7 @@ export default async function GadgetDetailsPage({ params }: ParamProps) {
                     </div>
 
                     {/* Rent Button */}
-                    <RentButton gadgetId={gadget._id} pricePerDay={gadget.pricePerDay} />
+                    <RentButton gadgetId={(gadget as any)._id} pricePerDay={gadget.pricePerDay} />
                 </div>
             </div>
 

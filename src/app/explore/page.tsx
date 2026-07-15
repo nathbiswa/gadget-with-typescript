@@ -55,32 +55,7 @@ export default function ExplorePage() {
             setLoading(false);
         }
     };
-    // const fetchGadgets = async () => {
-    //     setLoading(true);
-    //     try {
-    //         // কুয়েরি স্ট্রিং তৈরি করা হচ্ছে
-    //         const queryParams = new URLSearchParams({
-    //             search,
-    //             category,
-    //             maxPrice,
-    //             sortBy,
-    //             order,
-    //             page: page.toString(),
-    //             limit: '6' // প্রতি পেজে ৬টি করে কার্ড দেখাবে
-    //         });
 
-    //         const res = await fetch(`https://gadgetlease-server.onrender.com/api/gadgets?${queryParams.toString()}`);
-    //         const json = await res.json();
-    //         if (json.success) {
-    //             setGadgets(json.data);
-    //             setTotalPages(json.meta.totalPages);
-    //         }
-    //     } catch (error) {
-    //         console.error('Failed to fetch gadgets', error);
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
 
     // যখনই কোনো ফিল্টার বা পেজ চেঞ্জ হবে, তখনই ডাটা রি-লোড হবে
     useEffect(() => {
