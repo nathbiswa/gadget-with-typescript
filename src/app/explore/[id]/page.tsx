@@ -16,112 +16,112 @@ export default async function GadgetDetailsPage({ params }: ParamProps) {
     const { id } = await params;
 
     // ব্যাকএন্ড থেকে সিঙ্গেল গ্যাজেটের ডাটা আনা হচ্ছে
-    const res = await fetch(`${https://gadgetlease-server.onrender.com}/api/gadgets/${id}`, {
+    const res = await fetch(`https://gadgetlease-server.onrender.com/api/gadgets/${id}`, {
         cache: 'no-store',
     });
 
-if (!res.ok) {
-    toast.error('Failed to fetch gadget details. Please try again later.');
-    notFound(); // যদি ডাটা না পায় তবে ৪MD ৪ পেজে নিয়ে যাবে
-}
+    if (!res.ok) {
+        toast.error('Failed to fetch gadget details. Please try again later.');
+        notFound(); // যদি ডাটা না পায় তবে ৪MD ৪ পেজে নিয়ে যাবে
+    }
 
-const result = await res.json();
-const gadget: Gadget = result.data;
+    const result = await res.json();
+    const gadget: Gadget = result.data;
 
-return (
-    <div className="container mx-auto px-4 py-10 max-w-6xl">
-        {/* Back Button */}
-        <Link href="/explore" className="text-indigo-600 font-medium text-sm hover:underline mb-6 inline-block">
-            ← Back to Explore
-        </Link>
+    return (
+        <div className="container mx-auto px-4 py-10 max-w-6xl">
+            {/* Back Button */}
+            <Link href="/explore" className="text-indigo-600 font-medium text-sm hover:underline mb-6 inline-block">
+                ← Back to Explore
+            </Link>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-            {/* বাম পাশ: ইমেজ সেকশন */}
-            <div>
-                <div className="relative h-96 w-full rounded-xl overflow-hidden bg-gray-50">
-                    <Image
-                        src={gadget.images && gadget.images.length > 0 ? gadget.images[0] : 'https://placehold.co/600x400'}
-                        alt={gadget.title}
-                        fill
-                        className="object-cover"
-                        priority
-                    />
-                </div>
-
-                {/* যদি একাধিক ইমেজ থাকে তবে থাম্বনেইল দেখানোর জন্য (ঐচ্ছিক) */}
-                <div className="flex gap-3 mt-4">
-                    {gadget.images?.map((img, index) => (
-                        <div key={index} className="relative h-20 w-20 rounded-lg overflow-hidden border border-gray-200">
-                            <Image src={img} alt="image.title" width={400} height={400} className="w-full h-full object-cover" />
-                        </div>
-                    ))}
-                </div>
-            </div>
-
-            {/* ডান পাশ: গ্যাজেট ইনফরমেশন */}
-            <div className="flex flex-col justify-between">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-10 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                {/* বাম পাশ: ইমেজ সেকশন */}
                 <div>
-                    <div className="flex items-center justify-between mb-3">
-                        <span className="bg-indigo-50 text-indigo-600 text-xs font-semibold px-2.5 py-1 rounded-md">
-                            {gadget.category}
-                        </span>
-                        <span className="text-amber-500 font-bold text-sm">⭐ {gadget.rating?.toFixed(1)}</span>
+                    <div className="relative h-96 w-full rounded-xl overflow-hidden bg-gray-50">
+                        <Image
+                            src={gadget.images && gadget.images.length > 0 ? gadget.images[0] : 'https://placehold.co/600x400'}
+                            alt={gadget.title}
+                            fill
+                            className="object-cover"
+                            priority
+                        />
                     </div>
 
-                    <h1 className="text-3xl font-extrabold text-gray-800 mb-2">{gadget.title}</h1>
-                    <p className="text-gray-400 text-xs mb-4">📍 {gadget.location} | 📅 Available from: {gadget.availableDate}</p>
-
-                    <div className="mb-6">
-                        <span className="text-2xl font-black text-indigo-600">৳{gadget.pricePerDay}</span>
-                        <span className="text-gray-400 text-sm"> / day</span>
-                    </div>
-
-                    <div className="border-t border-gray-100 pt-4">
-                        <h3 className="text-gray-800 font-bold mb-2">Description</h3>
-                        <p className="text-gray-600 text-sm leading-relaxed">{gadget.fullDescription}</p>
-                    </div>
-
-                    {/* Specifications */}
-                    <div className="border-t border-gray-100 pt-4 mt-4">
-                        <h3 className="text-gray-800 font-bold mb-2">Specifications</h3>
-                        <div className="grid grid-cols-2 gap-2">
-                            {gadget.specifications?.map((spec, index) => (
-                                <div key={index} className="bg-gray-50 p-2 rounded-lg text-xs">
-                                    <span className="text-gray-400 block">{spec.label}</span>
-                                    <span className="text-gray-700 font-semibold">{spec.value}</span>
-                                </div>
-                            ))}
-                        </div>
+                    {/* যদি একাধিক ইমেজ থাকে তবে থাম্বনেইল দেখানোর জন্য (ঐচ্ছিক) */}
+                    <div className="flex gap-3 mt-4">
+                        {gadget.images?.map((img, index) => (
+                            <div key={index} className="relative h-20 w-20 rounded-lg overflow-hidden border border-gray-200">
+                                <Image src={img} alt="image.title" width={400} height={400} className="w-full h-full object-cover" />
+                            </div>
+                        ))}
                     </div>
                 </div>
 
-                {/* Rent Button */}
-                <RentButton gadgetId={gadget._id} pricePerDay={gadget.pricePerDay} />
+                {/* ডান পাশ: গ্যাজেট ইনফরমেশন */}
+                <div className="flex flex-col justify-between">
+                    <div>
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="bg-indigo-50 text-indigo-600 text-xs font-semibold px-2.5 py-1 rounded-md">
+                                {gadget.category}
+                            </span>
+                            <span className="text-amber-500 font-bold text-sm">⭐ {gadget.rating?.toFixed(1)}</span>
+                        </div>
+
+                        <h1 className="text-3xl font-extrabold text-gray-800 mb-2">{gadget.title}</h1>
+                        <p className="text-gray-400 text-xs mb-4">📍 {gadget.location} | 📅 Available from: {gadget.availableDate}</p>
+
+                        <div className="mb-6">
+                            <span className="text-2xl font-black text-indigo-600">৳{gadget.pricePerDay}</span>
+                            <span className="text-gray-400 text-sm"> / day</span>
+                        </div>
+
+                        <div className="border-t border-gray-100 pt-4">
+                            <h3 className="text-gray-800 font-bold mb-2">Description</h3>
+                            <p className="text-gray-600 text-sm leading-relaxed">{gadget.fullDescription}</p>
+                        </div>
+
+                        {/* Specifications */}
+                        <div className="border-t border-gray-100 pt-4 mt-4">
+                            <h3 className="text-gray-800 font-bold mb-2">Specifications</h3>
+                            <div className="grid grid-cols-2 gap-2">
+                                {gadget.specifications?.map((spec, index) => (
+                                    <div key={index} className="bg-gray-50 p-2 rounded-lg text-xs">
+                                        <span className="text-gray-400 block">{spec.label}</span>
+                                        <span className="text-gray-700 font-semibold">{spec.value}</span>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Rent Button */}
+                    <RentButton gadgetId={gadget._id} pricePerDay={gadget.pricePerDay} />
+                </div>
+            </div>
+
+            {/* Reviews Section */}
+            <div className="mt-10 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
+                <h3 className="text-gray-800 font-bold text-xl mb-4">User Reviews</h3>
+                {gadget.reviews && gadget.reviews.length > 0 ? (
+                    <div className="space-y-4">
+                        {gadget.reviews.map((review) => (
+                            <div key={review.id} className="border-b border-gray-50 pb-4 last:border-0">
+                                <div className="flex justify-between items-center mb-1">
+                                    <h4 className="font-semibold text-sm text-gray-700">{review.reviewerName}</h4>
+                                    <span className="text-xs text-gray-400">{review.date}</span>
+                                </div>
+                                <div className="text-amber-400 text-xs mb-1">{"⭐".repeat(review.rating)}</div>
+                                <p className="text-gray-600 text-sm">{review.comment}</p>
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <p className="text-gray-400 text-sm">No reviews yet for this item.</p>
+                )}
             </div>
         </div>
-
-        {/* Reviews Section */}
-        <div className="mt-10 bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
-            <h3 className="text-gray-800 font-bold text-xl mb-4">User Reviews</h3>
-            {gadget.reviews && gadget.reviews.length > 0 ? (
-                <div className="space-y-4">
-                    {gadget.reviews.map((review) => (
-                        <div key={review.id} className="border-b border-gray-50 pb-4 last:border-0">
-                            <div className="flex justify-between items-center mb-1">
-                                <h4 className="font-semibold text-sm text-gray-700">{review.reviewerName}</h4>
-                                <span className="text-xs text-gray-400">{review.date}</span>
-                            </div>
-                            <div className="text-amber-400 text-xs mb-1">{"⭐".repeat(review.rating)}</div>
-                            <p className="text-gray-600 text-sm">{review.comment}</p>
-                        </div>
-                    ))}
-                </div>
-            ) : (
-                <p className="text-gray-400 text-sm">No reviews yet for this item.</p>
-            )}
-        </div>
-    </div>
-);
+    );
 }
 
 
