@@ -45,7 +45,7 @@ export default function LoginPage() {
 
             // 🎯 সাকসেস হওয়ার পর Better Auth-এর সেশন ইনস্ট্যান্ট রি-ফেচ করে রোল অনুযায়ী রিডাইরেক্ট করা
             const updatedSession = await authClient.getSession();
-            if (updatedSession?.data?.user?.role === 'admin') {
+            if ((updatedSession?.data?.user as any)?.role === 'admin') {
                 router.push('/admin/dashboard');
             } else {
                 router.push('/');
