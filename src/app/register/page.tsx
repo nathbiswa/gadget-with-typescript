@@ -9,7 +9,7 @@ import { useRouter } from 'next/navigation';
 export default function RegisterPage() {
     const router = useRouter();
 
-    const onSubmit = async (e) => {
+    const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const formData = new FormData(e.currentTarget);
@@ -22,7 +22,6 @@ export default function RegisterPage() {
             image: user.image
         })
 
-        console.log('Sign Up Response:', { data, error });
 
         if (data) {
             toast.success('Successfully Sign Up');
