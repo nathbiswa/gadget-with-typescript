@@ -36,8 +36,7 @@ export default function ManageItemsPage() {
             const json = await res.json();
 
             if (json.success && Array.isArray(json.data)) {
-                // শুধুমাত্র বর্তমান ইউজারের আপলোড করা আইটেম ফিল্টার করা হচ্ছে
-                // (নোট: আপনার ব্যাকএন্ডে ফিল্ডের নাম userId বা addedBy হতে পারে, সেটি মিলিয়ে নেবেন)
+
                 const userOwnedItems = json.data.filter(
                     (item: any) => item.userId === userId || item.addedBy === userId
                 );
@@ -80,7 +79,7 @@ export default function ManageItemsPage() {
         } catch (error) {
             console.error("Token catch block error:", error);
         }
-        console.log("Token:", token);
+
 
         const confirmDelete = window.confirm("Are you sure you want to remove this listing permanently?");
         if (!confirmDelete) return;
@@ -190,7 +189,7 @@ export default function ManageItemsPage() {
                                             </Button>
                                         </Link>
                                         <Button
-                                            disabled={deleteLoadingId === item._id}
+                                            isDisabled={deleteLoadingId === item._id}
                                             onClick={() => handleDelete(item._id)}
                                             className="flex-1 sm:flex-none bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-4 py-2 rounded-lg transition-all cursor-pointer disabled:opacity-50"
                                         >
