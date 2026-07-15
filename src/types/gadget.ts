@@ -15,6 +15,7 @@ export interface Review {
 
 export interface Gadget {
   id: string;
+  _id?: string;
   title: string;
   shortDescription: string;
   fullDescription: string; // নতুন যুক্ত হলো
