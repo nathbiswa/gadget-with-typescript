@@ -271,7 +271,7 @@ export default function ManageItemsPage() {
                                                     </Button>
                                                 </Link>
                                                 <Button
-                                                    disabled={deleteLoadingId === item._id}
+                                                    isDisabled={deleteLoadingId === item._id}
                                                     onClick={() => handleDelete(item._id)}
                                                     className="bg-red-50 hover:bg-red-100 text-red-600 text-xs font-bold px-3 py-1.5 rounded-lg transition-all cursor-pointer disabled:opacity-50"
                                                 >
